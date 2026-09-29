@@ -1,69 +1,371 @@
-import Image from "next/image";
+"use client";
+
+import { useLayoutEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function Home() {
+  const heroRef = useRef<HTMLElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const subtitleRef = useRef<HTMLParagraphElement>(null);
+  const boxesRef = useRef<HTMLDivElement>(null);
+  const carRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      // =====================================
+      // INITIAL STATE
+      // =====================================
+
+      // Car starts from left
+      gsap.set(carRef.current, {
+        x: 0,
+        opacity: 1,
+      });
+
+      // Welcome hidden initially
+      gsap.set(titleRef.current, {
+        opacity: 0,
+        y: 30,
+      });
+
+      // Subtitle hidden initially
+      gsap.set(subtitleRef.current, {
+        opacity: 0,
+        y: 20,
+      });
+
+      // All boxes hidden initially
+      gsap.set(boxesRef.current, {
+        opacity: 0,
+        y: 30,
+      });
+
+      // =====================================
+      // SCROLL TIMELINE
+      // =====================================
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: heroRef.current,
+          start: "top top",
+          end: "bottom top",
+          scrub: 1,
+        },
+      });
+
+      // =====================================
+      // CAR: LEFT → RIGHT
+      // =====================================
+
+      tl.to(
+        carRef.current,
+        {
+          x: "55vw",
+          duration: 1,
+          ease: "none",
+        },
+        0
+      );
+
+      // =====================================
+      // WELCOME APPEARS
+      // =====================================
+
+      tl.to(
+        titleRef.current,
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.18,
+          ease: "power2.out",
+        },
+        0.55
+      );
+
+      // =====================================
+      // SUBTITLE APPEARS
+      // =====================================
+
+      tl.to(
+        subtitleRef.current,
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.15,
+          ease: "power2.out",
+        },
+        0.6
+      );
+
+      // =====================================
+      // BOXES APPEAR
+      // =====================================
+
+      tl.to(
+        boxesRef.current,
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.18,
+          ease: "power2.out",
+        },
+        0.55
+      );
+    }, heroRef);
+
+    return () => {
+      ctx.revert();
+    };
+  }, []);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <main className="bg-[#d3d3d3] text-black">
+
+      {/* ==================================================
+          HERO SCROLL SECTION
+      ================================================== */}
+
+      <section
+        ref={heroRef}
+        className="relative h-[200vh]"
+      >
+        {/* ==================================================
+            STICKY VIEWPORT
+        ================================================== */}
+
+        <div className="sticky top-0 h-screen overflow-hidden">
+
+          {/* ==================================================
+              BOXES
+          ================================================== */}
+
+          <div
+            ref={boxesRef}
+            className="pointer-events-none absolute inset-0 z-30"
           >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
+            {/* ================= TOP BOXES ================= */}
+
+            <div
+              className="
+                absolute
+                right-[10%]
+                top-10
+                flex
+                gap-2
+              "
+            >
+              {/* 58% BOX */}
+
+              <div
+                className="
+                  flex
+                  h-[150px]
+                  w-[290px]
+                  flex-col
+                  justify-center
+                  rounded-xl
+                  bg-[#e8ff32]
+                  px-8
+                "
+              >
+                <h2 className="text-5xl font-bold">
+                  58%
+                </h2>
+
+                <p className="mt-2 text-sm">
+                  Increase in pick up point use
+                </p>
+              </div>
+
+              {/* 27% BOX */}
+
+              <div
+                className="
+                  flex
+                  h-[150px]
+                  w-[260px]
+                  flex-col
+                  justify-center
+                  rounded-xl
+                  bg-[#858585]
+                  px-8
+                  text-white
+                "
+              >
+                <h2 className="text-5xl font-bold">
+                  27%
+                </h2>
+
+                <p className="mt-2 text-sm">
+                  Increase in pick up point use
+                </p>
+              </div>
+            </div>
+
+            {/* ================= BOTTOM BOX ================= */}
+
+            <div
+              className="
+                absolute
+                bottom-[4%]
+                left-1/2
+                w-[310px]
+                -translate-x-1/2
+                rounded-xl
+                bg-[#61bdf0]
+                px-8
+                py-8
+              "
+            >
+              <h2 className="text-5xl font-bold">
+                23%
+              </h2>
+
+              <p className="mt-2 text-sm">
+                Decreased in customer phone calls
+              </p>
+            </div>
+          </div>
+
+          {/* ==================================================
+              GREEN STRIP
+          ================================================== */}
+
+          <div
+            className="
+              absolute
+              left-0
+              top-[34%]
+              h-[250px]
+              w-full
+              bg-[#45d87b]
+            "
+          />
+
+          {/* ==================================================
+              WELCOME CONTENT
+          ================================================== */}
+
+          <div
+            className="
+              absolute
+              left-[4%]
+              top-[38%]
+              z-20
+            "
+          >
+            {/* WELCOME */}
+
+            <h1
+              ref={titleRef}
+              className="
+                text-[clamp(4rem,10vw,9rem)]
+                font-black
+                uppercase
+                leading-none
+                tracking-tight
+              "
+            >
+              WELCOME ITFIZ
+            </h1>
+
+            {/* SUBTITLE */}
+
+            <p
+              ref={subtitleRef}
+              className="
+                mt-4
+                max-w-lg
+                text-sm
+                text-black/60
+                md:text-base
+              "
+            ></p>
+          </div>
+
+          {/* ==================================================
+              CAR
+          ================================================== */}
+
+          <div
+            ref={carRef}
+            className="
+              pointer-events-none
+              absolute
+              left-[5%]
+              top-[34%]
+              z-40
+              w-[300px]
+              md:w-[380px]
+              lg:w-[450px]
+            "
+          >
+            <img
+              src="/car.png"
+              alt="Sports car"
+              className="h-auto w-full object-contain"
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          </div>
+
+          {/* ==================================================
+              SCROLL INDICATOR
+          ================================================== */}
+
+          <div
+            className="
+              absolute
+              bottom-6
+              left-1/2
+              z-50
+              -translate-x-1/2
+              text-xs
+              uppercase
+              tracking-[0.3em]
+              text-black/50
+            "
           >
-            Documentation
-          </a>
+            Scroll ↓
+          </div>
         </div>
-      </main>
-    </div>
+      </section>
+
+      {/* ==================================================
+          SECOND SECTION
+      ================================================== */}
+
+      <section
+        className="
+          flex
+          min-h-screen
+          items-center
+          justify-center
+          bg-black
+          px-6
+          text-white
+        "
+      >
+        <div className="text-center">
+          <p
+            className="
+              mb-4
+              text-xs
+              uppercase
+              tracking-[0.3em]
+              text-white/50
+            "
+          >
+            Keep scrolling
+          </p>
+
+          <h2 className="text-4xl font-semibold md:text-6xl">
+            Scroll Driven Motion
+          </h2>
+        </div>
+      </section>
+
+    </main>
   );
 }
